@@ -1,6 +1,6 @@
 {
   "homepage": "https://Samuill.github.io/chordscreator3000/",
-     "scripts": {
+  "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "predeploy": "npm run build",
