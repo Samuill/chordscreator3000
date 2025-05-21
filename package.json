@@ -1,6 +1,6 @@
 {
-  "homepage": "https://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@github.com/Samuill/chordscreator3000",
-  "scripts": {
+  "homepage": "https://Samuill.github.io/chordscreator3000/",
+     "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "predeploy": "npm run build",
