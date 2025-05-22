@@ -64,15 +64,25 @@ const LineEditor = React.memo(({ line, index, updateLine, onEnter, focus, onSpli
           {isSplitPoint ? "Повернути в один стовпець" : "Перейти на наступний стовпець"}
         </button>
       </div>
+      <div className="mt-2">
+        <label>
+          <input
+            type="checkbox"
+            checked={line.isStructure || false}
+            onChange={e => updateLine(index, "isStructure", e.target.checked)}
+          />
+          Структура пісні
+        </label>
+      </div>
     </div>
   );
 });
 
 // Мемоізований компонент DisplayLine
-const DisplayLine = React.memo(({ chords, lyrics, showChords, showLyrics, chordSize, lyricSize, chordColor, textColor, lineSpacing, chordSpacing }) => {
+const DisplayLine = React.memo(({ chords, lyrics, showChords, showLyrics, chordSize, lyricSize, chordColor, textColor, lineSpacing, chordSpacing, isStructure }) => {
   return (
     <div style={{ marginTop: lineSpacing, marginBottom: lineSpacing }}>
-      {showChords && chords && (
+      {(isStructure || showChords) && chords && (
         <div
           className="font-bold mb-0.5 chord-word-spacing"
           style={{ 
@@ -116,6 +126,25 @@ function App() {
   const [lineSpacing, setLineSpacing] = useState(10); // Відступ між рядками
   const [chordSpacing, setChordSpacing] = useState(5); // Відступ для акордів
   const exportRef = useRef(null);
+
+  useEffect(() => {
+    const storedBulkInput = localStorage.getItem("bulkInput");
+    if (storedBulkInput) setBulkInput(storedBulkInput);
+  }, []);
+
+  useEffect(() => {
+    const serializeLines = () =>
+      lines
+        .map((line) => {
+          let chordText = line.chords;
+          if (line.isStructure) chordText = '*' + chordText;
+          return `[${chordText}] ${line.lyrics}`;
+        })
+        .join('\n');
+    const serialized = serializeLines();
+    setBulkInput(serialized);
+    localStorage.setItem("bulkInput", serialized);
+  }, [lines]);
 
   // Оптимізовані колбеки
   const updateLine = useCallback((index, field, value) => {
@@ -200,10 +229,13 @@ function App() {
     rawLines.forEach((line) => {
       const chordMatch = line.match(/^\s*\[([^\]]+)\]\s*(.*)$/);
       if (chordMatch) {
-        result.push({ 
-          chords: chordMatch[1], // не викликаємо trim(), щоб зберегти пробіли на початку
-          lyrics: chordMatch[2].trim() 
-        });
+        let chordStr = chordMatch[1];
+        let isStructure = false;
+        if (chordStr.startsWith('*')) {
+          isStructure = true;
+          chordStr = chordStr.substring(1);
+        }
+        result.push({ chords: chordStr, lyrics: chordMatch[2].trim(), isStructure });
       } else {
         const parts = line.split(/\t| {2,}/);
         if (parts.length >= 2) {
@@ -453,6 +485,34 @@ function App() {
             type="button"
           >
             Експортувати як PNG
+          </button>
+          <button
+            onClick={() => {
+              setLines(prev =>
+                prev.map(line => ({
+                  ...line,
+                  lyrics: "\t" + line.lyrics
+                }))
+              );
+            }}
+            className="px-4 py-2 rounded font-semibold border bg-purple-600 text-white hover:bg-purple-700"
+            type="button"
+          >
+            Відступити слова
+          </button>
+          <button
+            onClick={() => {
+              setLines(prev =>
+                prev.map(line => ({
+                  ...line,
+                  lyrics: line.lyrics.startsWith("\t") ? line.lyrics.substring(1) : line.lyrics
+                }))
+              );
+            }}
+            className="px-4 py-2 rounded font-semibold border bg-orange-600 text-white hover:bg-orange-700"
+            type="button"
+          >
+            Забрати відступ
           </button>
         </div>
 
