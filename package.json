@@ -1,5 +1,5 @@
 {
-  "homepage": "https://Samuill.github.io/chordscreator3000/",
+  
   "scripts": {
     "dev": "vite",
     "build": "vite build",
