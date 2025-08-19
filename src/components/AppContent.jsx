@@ -226,6 +226,18 @@ const AppContent = () => {
     };
   }, [lines, splitIndex]);
 
+  const applyBulkInput = useCallback(() => {
+    try {
+      const parsed = parseBulkInput(bulkInput);
+      if (parsed.length > 0) {
+        setLines(parsed);
+        setBulkInput("");
+      }
+    } catch (error) {
+      console.error('Error parsing bulk input:', error);
+    }
+  }, [bulkInput]);
+
   const exportAsPng = useCallback(() => {
     if (!exportRef.current) return;
 
@@ -409,26 +421,6 @@ const AppContent = () => {
     setCurrentTransposition(prev => prev + steps);
   }, []);
 
-  // Видаляємо applyBulkInput і кнопку "Застосувати текст"
-  // Додаємо ефект для автооновлення lines при зміні bulkInput
-  useEffect(() => {
-    // Не оновлюємо, якщо bulkInput порожній (щоб не стерти все)
-    if (bulkInput.trim() === "") return;
-    try {
-      const parsed = parseBulkInput(bulkInput);
-      // Оновлюємо тільки якщо розпарсений результат відрізняється від поточного lines
-      // (щоб уникнути нескінченного циклу)
-      const linesStr = JSON.stringify(lines.map(l => ({ chords: l.chords, lyrics: l.lyrics })));
-      const parsedStr = JSON.stringify(parsed.map(l => ({ chords: l.chords, lyrics: l.lyrics })));
-      if (linesStr !== parsedStr) {
-        setLines(parsed);
-      }
-    } catch (error) {
-      // Ігноруємо помилки парсингу
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bulkInput]);
-
   return (
     <div className="mx-auto" style={{ maxWidth: containerWidth }}>
       <h1 className="font-extrabold text-2xl mb-6 text-[#3e2f1c]">Редактор акордів і тексту</h1>
@@ -470,8 +462,13 @@ const AppContent = () => {
             className="w-full p-2 border border-gray-300 rounded resize-y font-mono"
             placeholder={`Приклад:\n[Am C F G] За мене хрест поніс,\nC І прийняв смерть,\n[F Gsus G] щоб я жив у свободі\n[C G] Тобі віддам життя,\n[C ]Прославлю я\n[F Gsus G ]Твою милість навіки, Бог!`}
           />
-          {/* Кнопку можна видалити або замінити на "Скинути до bulkInput" */}
-          {/* <button ...>Застосувати текст</button> */}
+          <button
+            onClick={applyBulkInput}
+            className="mt-2 px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            type="button"
+          >
+            Застосувати текст
+          </button>
         </div>
       </div>
 
