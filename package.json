@@ -12,19 +12,25 @@
   "version": "0.0.0",
   "type": "module",
   "devDependencies": {
-    "vite": "^6.3.5",
-    "gh-pages": "^5.0.0"
+    "autoprefixer": "^10.4.21",
+    "gh-pages": "^5.0.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.12",
+    "vite": "^6.3.5"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
+    "@vitejs/plugin-react": "^5.0.0",
     "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
     "react": "^19.1.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
+    "react-dnd-multi-backend": "^9.0.0",
+    "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^19.1.0",
     "slate": "^0.114.0",
     "slate-react": "^0.114.2"
