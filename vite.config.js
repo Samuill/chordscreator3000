@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/my-react-app/', // Додайте цей рядок!
+  base: '/chordscreator3000/', // Додайте цей рядок!
 });
